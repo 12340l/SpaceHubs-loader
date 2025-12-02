@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Space Games Loader</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: black;
+            font-family: Arial, sans-serif;
+            color: white;
+        }
+
+        /* Password overlay */
+        #passwordOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #passwordOverlay h1 {
+            color: white;
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+
+        #passwordOverlay input {
+            padding: 12px;
+            font-size: 18px;
+            border-radius: 6px;
+            border: none;
+            margin-bottom: 10px;
+        }
+
+        #passwordOverlay button {
+            padding: 12px 20px;
+            font-size: 18px;
+            border-radius: 6px;
+            border: none;
+            background: white;
+            color: black;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        #passwordOverlay button:hover {
+            transform: scale(1.05);
+        }
+
+        #passwordOverlay .error {
+            color: red;
+            margin-top: 10px;
+            font-size: 16px;
+        }
+
+        /* Stars background */
+        #stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            background: transparent;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 2s infinite alternate;
+        }
+
+        @keyframes twinkle {
+            from { opacity: 0.2; }
+            to { opacity: 1; }
+        }
+
+        /* Sidebar */
+        #sidebar {
+            width: 250px;
+            background: #111;
+            height: 100vh;
+            overflow-y: auto;
+            position: fixed;
+            padding: 20px;
+            border-right: 2px solid #333;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            z-index: 2;
+        }
+
+        #sidebar.hidden {
+            transform: translateX(-100%);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #sidebar h1 {
+            font-size: 28px;
+            text-align: center;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        #sidebar button {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            background: white;
+            border: none;
+            color: black;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        #sidebar button:hover {
+            transform: scale(1.05);
+        }
+
+        /* Slide handle */
+        #slideHandle {
+            width: 40px;
+            height: 100px;
+            background: white;
+            position: fixed;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            border-radius: 0 6px 6px 0;
+            cursor: pointer;
+            display: none;
+            text-align: center;
+            line-height: 100px;
+            font-weight: bold;
+            color: black;
+            z-index: 3;
+            user-select: none;
+        }
+
+        /* Viewer */
+        #viewer {
+            position: absolute;
+            left: 250px;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            transition: left 0.3s ease;
+            z-index: 1;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: black;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        /* Fullscreen Close button */
+        #closeFullscreenBtn {
+            display: none;
+            position: fixed;
+            top: 10px;
+            right: 20px;
+            background: rgba(255,255,255,0.8);
+            color: black;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            z-index: 9999;
+        }
+
+        /* Admin panel overlay */
+        #adminOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,50,0.95);
+            z-index: 10000;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #adminOverlay h1 {
+            color: yellow;
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+
+        #adminOverlay input {
+            padding: 12px;
+            font-size: 18px;
+            border-radius: 6px;
+            border: none;
+            margin-bottom: 10px;
+        }
+
+        #adminOverlay button {
+            padding: 12px 20px;
+            font-size: 18px;
+            border-radius: 6px;
+            border: none;
+            background: yellow;
+            color: black;
+            cursor: pointer;
+            margin: 5px;
+            transition: transform 0.2s;
+        }
+
+        #adminOverlay button:hover {
+            transform: scale(1.05);
+        }
+
+        #adminOverlay .error {
+            color: red;
+            margin-top: 10px;
+            font-size: 16px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Password overlay -->
+    <div id="passwordOverlay">
+        <h1>Enter Password</h1>
+        <input type="password" id="passwordInput" placeholder="Password">
+        <button onclick="checkPassword()">Submit</button>
+        <div class="error" id="errorMsg"></div>
+    </div>
+
+    <!-- Admin panel overlay -->
+    <div id="adminOverlay">
+        <h1>Admin Panel</h1>
+        <input type="password" id="adminInput" placeholder="Admin Password">
+        <button onclick="checkAdminPassword()">Enter</button>
+        <div class="error" id="adminError"></div>
+        <button onclick="triggerShutdownCheck()">Shutdown (Check Pastebin)</button>
+    </div>
+
+    <div id="stars"></div>
+
+    <div id="sidebar">
+        <h1>Space Games Loader</h1>
+        <button onclick="loadGame('https://SpaceHubs-Mathhelp-fractions.pro-house.cl')">Math Hub</button>
+        <button onclick="loadGame('https://spacehubs-glinty.pro-house.cl')">Glint</button>
+        <button onclick="loadGame('https://spacehubs-bros.pro-house.cl')">Bromine</button>
+        <button onclick="toggleFullscreen()">Full Screen</button>
+    </div>
+
+    <div id="slideHandle" onclick="toggleSidebar()">☰</div>
+
+    <div id="viewer">
+        <iframe id="frame" src=""></iframe>
+    </div>
+
+    <div id="closeFullscreenBtn" onclick="exitFullscreen()">Close</div>
+
+    <script>
+        // --- Basic Elements ---
+        const sidebar = document.getElementById('sidebar');
+        const slideHandle = document.getElementById('slideHandle');
+        const viewer = document.getElementById('viewer');
+        const frame = document.getElementById('frame');
+        const closeBtn = document.getElementById('closeFullscreenBtn');
+        const starsContainer = document.getElementById('stars');
+
+        const passwordOverlay = document.getElementById('passwordOverlay');
+        const passwordInput = document.getElementById('passwordInput');
+        const errorMsg = document.getElementById('errorMsg');
+        const correctPassword = "Og.Potate";
+
+        const adminOverlay = document.getElementById('adminOverlay');
+        const adminInput = document.getElementById('adminInput');
+        const adminError = document.getElementById('adminError');
+        const adminPassword = "ys4350";
+
+        // --- Password Check ---
+        function checkPassword() {
+            if(passwordInput.value === correctPassword){
+                passwordOverlay.style.display = 'none';
+            } else {
+                errorMsg.textContent = "Incorrect password. Try again!";
+                passwordInput.value = '';
+                passwordInput.focus();
+            }
+        }
+        passwordInput.addEventListener("keypress", e => { if(e.key === "Enter") checkPassword(); });
+
+        // --- Admin Panel Check ---
+        function checkAdminPassword() {
+            if(adminInput.value === adminPassword){
+                adminError.textContent = "";
+                alert("Admin access granted!");
+                adminOverlay.style.display = 'flex';
+                adminInput.value = '';
+            } else {
+                adminError.textContent = "Wrong admin password!";
+                adminInput.value = '';
+                adminInput.focus();
+            }
+        }
+        adminInput.addEventListener("keypress", e => { if(e.key === "Enter") checkAdminPassword(); });
+
+        // --- Admin Panel Hotkey ---
+        document.addEventListener("keydown", e => {
+            if(e.ctrlKey && e.shiftKey && e.key === ")"){
+                adminOverlay.style.display = "flex";
+                adminInput.focus();
+            }
+        });
+
+        // --- Stars ---
+        function createStars() {
+            starsContainer.innerHTML = '';
+            for(let i=0;i<100;i++){
+                const star=document.createElement('div');
+                star.classList.add('star');
+                star.style.top=Math.random()*window.innerHeight+'px';
+                star.style.left=Math.random()*window.innerWidth+'px';
+                const size=Math.random()*2+1;
+                star.style.width=star.style.height=size+'px';
+                star.style.animationDuration=(1+Math.random()*2)+'s';
+                starsContainer.appendChild(star);
+            }
+        }
+        createStars();
+        window.addEventListener('resize',createStars);
+
+        // --- Viewer ---
+        function updateViewer(){ viewer.style.left = sidebar.classList.contains('hidden')?'0':'250px'; }
+        function loadGame(url){
+            frame.style.opacity=0;
+            frame.src=url;
+            frame.onload=()=>frame.style.opacity=1;
+            sidebar.classList.add('hidden');
+            slideHandle.style.display='block';
+            updateViewer();
+        }
+        function toggleSidebar(){
+            if(sidebar.classList.contains('hidden')){
+                sidebar.classList.remove('hidden');
+                slideHandle.style.display='none';
+            } else {
+                sidebar.classList.add('hidden');
+                slideHandle.style.display='block';
+            }
+            updateViewer();
+        }
+
+        // --- Fullscreen ---
+        function toggleFullscreen(){
+            if(!document.fullscreenElement){
+                viewer.requestFullscreen();
+                closeBtn.style.display='block';
+            }
+        }
+        function exitFullscreen(){
+            if(document.fullscreenElement){
+                document.exitFullscreen();
+                closeBtn.style.display='none';
+                sidebar.style.display=sidebar.classList.contains('hidden')?'none':'block';
+                slideHandle.style.display=sidebar.classList.contains('hidden')?'block':'none';
+            }
+        }
+        document.addEventListener('fullscreenchange',()=>{
+            if(!document.fullscreenElement){
+                closeBtn.style.display='none';
+                sidebar.style.display=sidebar.classList.contains('hidden')?'none':'block';
+                slideHandle.style.display=sidebar.classList.contains('hidden')?'block':'none';
+                updateViewer();
+            }
+        });
+
+        // --- Shutdown Feature ---
+        const shutdownPastebinURL = "https://pastebin.com/raw/A7zB6RjT";
+        const shutdownKeywords = ["DISABLE"];
+
+        async function triggerShutdownCheck(){
+            try {
+                const response = await fetch(shutdownPastebinURL);
+                const text = await response.text();
+                for(const keyword of shutdownKeywords){
+                    if(text.includes(keyword)){
+                        forceShutdown();
+                        break;
+                    }
+                }
+            } catch(err){ console.error("Shutdown check failed:", err); }
+        }
+
+        function forceShutdown(){
+            alert("⚠️ The site has been disabled by the administrator.");
+            document.body.innerHTML = `
+                <div style="display:flex;justify-content:center;align-items:center;width:100vw;height:100vh;background:black;color:red;font-size:32px;text-align:center;">
+                    ⚠️ This website has been temporarily disabled.
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>
