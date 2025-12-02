@@ -25,13 +25,11 @@
             justify-content: center;
             align-items: center;
         }
-
         #passwordOverlay h1 {
             color: white;
             font-size: 32px;
             margin-bottom: 20px;
         }
-
         #passwordOverlay input {
             padding: 12px;
             font-size: 18px;
@@ -39,7 +37,6 @@
             border: none;
             margin-bottom: 10px;
         }
-
         #passwordOverlay button {
             padding: 12px 20px;
             font-size: 18px;
@@ -50,16 +47,8 @@
             cursor: pointer;
             transition: transform 0.2s;
         }
-
-        #passwordOverlay button:hover {
-            transform: scale(1.05);
-        }
-
-        #passwordOverlay .error {
-            color: red;
-            margin-top: 10px;
-            font-size: 16px;
-        }
+        #passwordOverlay button:hover { transform: scale(1.05); }
+        #passwordOverlay .error { color: red; margin-top: 10px; font-size: 16px; }
 
         /* Stars background */
         #stars {
@@ -72,7 +61,6 @@
             z-index: 0;
             background: transparent;
         }
-
         .star {
             position: absolute;
             width: 2px;
@@ -81,10 +69,8 @@
             border-radius: 50%;
             animation: twinkle 2s infinite alternate;
         }
-
         @keyframes twinkle {
-            from { opacity: 0.2; }
-            to { opacity: 1; }
+            from { opacity: 0.2; } to { opacity: 1; }
         }
 
         /* Sidebar */
@@ -99,20 +85,8 @@
             transition: transform 0.3s ease, opacity 0.3s ease;
             z-index: 2;
         }
-
-        #sidebar.hidden {
-            transform: translateX(-100%);
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        #sidebar h1 {
-            font-size: 28px;
-            text-align: center;
-            margin-bottom: 20px;
-            color: white;
-        }
-
+        #sidebar.hidden { transform: translateX(-100%); opacity: 0; pointer-events: none; }
+        #sidebar h1 { font-size: 28px; text-align: center; margin-bottom: 20px; color: white; }
         #sidebar button {
             width: 100%;
             padding: 12px;
@@ -125,10 +99,7 @@
             border-radius: 6px;
             transition: transform 0.2s, background 0.2s;
         }
-
-        #sidebar button:hover {
-            transform: scale(1.05);
-        }
+        #sidebar button:hover { transform: scale(1.05); }
 
         /* Slide handle */
         #slideHandle {
@@ -160,15 +131,7 @@
             transition: left 0.3s ease;
             z-index: 1;
         }
-
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            background: black;
-            opacity: 0;
-            transition: opacity 0.5s ease;
-        }
+        iframe { width: 100%; height: 100%; border: none; background: black; opacity: 0; transition: opacity 0.5s ease; }
 
         /* Fullscreen Close button */
         #closeFullscreenBtn {
@@ -184,6 +147,24 @@
             z-index: 9999;
         }
 
+        /* Welcome Screen */
+        #welcomeScreen {
+            position: absolute;
+            top:0;
+            left:0;
+            width:100%;
+            height:100%;
+            background:black;
+            color:white;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            flex-direction:column;
+            z-index:10;
+        }
+        #welcomeScreen h1 { font-size: 48px; }
+        #welcomeScreen p { font-size: 20px; }
+
         /* Admin panel overlay */
         #adminOverlay {
             position: fixed;
@@ -198,13 +179,7 @@
             justify-content: center;
             align-items: center;
         }
-
-        #adminOverlay h1 {
-            color: yellow;
-            font-size: 32px;
-            margin-bottom: 20px;
-        }
-
+        #adminOverlay h1 { color: yellow; font-size: 32px; margin-bottom: 20px; }
         #adminOverlay input {
             padding: 12px;
             font-size: 18px;
@@ -212,7 +187,6 @@
             border: none;
             margin-bottom: 10px;
         }
-
         #adminOverlay button {
             padding: 12px 20px;
             font-size: 18px;
@@ -224,16 +198,8 @@
             margin: 5px;
             transition: transform 0.2s;
         }
-
-        #adminOverlay button:hover {
-            transform: scale(1.05);
-        }
-
-        #adminOverlay .error {
-            color: red;
-            margin-top: 10px;
-            font-size: 16px;
-        }
+        #adminOverlay button:hover { transform: scale(1.05); }
+        #adminOverlay .error { color: red; margin-top: 10px; font-size: 16px; }
 
     </style>
 </head>
@@ -256,8 +222,10 @@
         <button onclick="triggerShutdownCheck()">Shutdown (Check Pastebin)</button>
     </div>
 
+    <!-- Stars -->
     <div id="stars"></div>
 
+    <!-- Sidebar -->
     <div id="sidebar">
         <h1>Space Games Loader</h1>
         <button onclick="loadGame('https://SpaceHubs-Mathhelp-fractions.pro-house.cl')">Math Hub</button>
@@ -266,16 +234,24 @@
         <button onclick="toggleFullscreen()">Full Screen</button>
     </div>
 
+    <!-- Slide handle -->
     <div id="slideHandle" onclick="toggleSidebar()">☰</div>
 
+    <!-- Welcome screen -->
+    <div id="welcomeScreen">
+        <h1>Space Games Loader</h1>
+        <p>Click a game button to start</p>
+    </div>
+
+    <!-- Viewer iframe -->
     <div id="viewer">
         <iframe id="frame" src=""></iframe>
     </div>
 
+    <!-- Fullscreen close button -->
     <div id="closeFullscreenBtn" onclick="exitFullscreen()">Close</div>
 
     <script>
-        // --- Basic Elements ---
         const sidebar = document.getElementById('sidebar');
         const slideHandle = document.getElementById('slideHandle');
         const viewer = document.getElementById('viewer');
@@ -293,8 +269,10 @@
         const adminError = document.getElementById('adminError');
         const adminPassword = "ys4350";
 
-        // --- Password Check ---
-        function checkPassword() {
+        const welcomeScreen = document.getElementById('welcomeScreen');
+
+        // --- Password check ---
+        function checkPassword(){
             if(passwordInput.value === correctPassword){
                 passwordOverlay.style.display = 'none';
             } else {
@@ -305,8 +283,8 @@
         }
         passwordInput.addEventListener("keypress", e => { if(e.key === "Enter") checkPassword(); });
 
-        // --- Admin Panel Check ---
-        function checkAdminPassword() {
+        // --- Admin panel ---
+        function checkAdminPassword(){
             if(adminInput.value === adminPassword){
                 adminError.textContent = "";
                 alert("Admin access granted!");
@@ -320,7 +298,6 @@
         }
         adminInput.addEventListener("keypress", e => { if(e.key === "Enter") checkAdminPassword(); });
 
-        // --- Admin Panel Hotkey ---
         document.addEventListener("keydown", e => {
             if(e.ctrlKey && e.shiftKey && e.key === ")"){
                 adminOverlay.style.display = "flex";
@@ -329,8 +306,8 @@
         });
 
         // --- Stars ---
-        function createStars() {
-            starsContainer.innerHTML = '';
+        function createStars(){
+            starsContainer.innerHTML='';
             for(let i=0;i<100;i++){
                 const star=document.createElement('div');
                 star.classList.add('star');
@@ -345,32 +322,29 @@
         createStars();
         window.addEventListener('resize',createStars);
 
-        // --- Viewer ---
-        function updateViewer(){ viewer.style.left = sidebar.classList.contains('hidden')?'0':'250px'; }
+        // --- Load game ---
         function loadGame(url){
-            frame.style.opacity=0;
-            frame.src=url;
-            frame.onload=()=>frame.style.opacity=1;
+            if(welcomeScreen) welcomeScreen.style.display = 'none';
+            frame.style.opacity = 0;
+            frame.src = url;
+            frame.onload = ()=>frame.style.opacity = 1;
             sidebar.classList.add('hidden');
             slideHandle.style.display='block';
             updateViewer();
         }
+
+        function updateViewer(){ viewer.style.left = sidebar.classList.contains('hidden')?'0':'250px'; }
         function toggleSidebar(){
             if(sidebar.classList.contains('hidden')){
-                sidebar.classList.remove('hidden');
-                slideHandle.style.display='none';
-            } else {
-                sidebar.classList.add('hidden');
-                slideHandle.style.display='block';
-            }
+                sidebar.classList.remove('hidden'); slideHandle.style.display='none';
+            } else { sidebar.classList.add('hidden'); slideHandle.style.display='block'; }
             updateViewer();
         }
 
         // --- Fullscreen ---
         function toggleFullscreen(){
             if(!document.fullscreenElement){
-                viewer.requestFullscreen();
-                closeBtn.style.display='block';
+                viewer.requestFullscreen(); closeBtn.style.display='block';
             }
         }
         function exitFullscreen(){
@@ -390,12 +364,11 @@
             }
         });
 
-        // --- Shutdown Feature ---
+        // --- Shutdown ---
         const shutdownPastebinURL = "https://pastebin.com/raw/A7zB6RjT";
         const shutdownKeywords = ["DISABLE"];
-
         async function triggerShutdownCheck(){
-            try {
+            try{
                 const response = await fetch(shutdownPastebinURL);
                 const text = await response.text();
                 for(const keyword of shutdownKeywords){
@@ -406,14 +379,9 @@
                 }
             } catch(err){ console.error("Shutdown check failed:", err); }
         }
-
         function forceShutdown(){
             alert("⚠️ The site has been disabled by the administrator.");
-            document.body.innerHTML = `
-                <div style="display:flex;justify-content:center;align-items:center;width:100vw;height:100vh;background:black;color:red;font-size:32px;text-align:center;">
-                    ⚠️ This website has been temporarily disabled.
-                </div>
-            `;
+            document.body.innerHTML = `<div style="display:flex;justify-content:center;align-items:center;width:100vw;height:100vh;background:black;color:red;font-size:32px;text-align:center;">⚠️ This website has been temporarily disabled.</div>`;
         }
     </script>
 </body>
